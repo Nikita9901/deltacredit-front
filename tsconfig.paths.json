@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@moneylend-ui": [
+        "./src/moneylend-ui"
+      ]
+    }
+  }
+}
