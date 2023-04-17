@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Block } from "./styles";
 import { Box, Divider } from "@mui/material";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
@@ -6,13 +6,12 @@ import { ITransferField } from "./types";
 import { useNavigate } from "react-router-dom";
 import { MLButton, MLInput, MLTypography } from "@moneylend-ui";
 import MLLogoImage from "../../moneylend-ui/components/MLLogoImage";
-import { Context } from "../../index";
-import { observer } from "mobx-react-lite";
+import { useAuthenticate } from "../../utils/hooks";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const { store } = useContext(Context);
+  const [{ loading: loggingIn }, authenticate] = useAuthenticate();
 
   const {
     handleSubmit,
@@ -27,7 +26,8 @@ const LoginPage: React.FC = () => {
     email,
     password,
   }) => {
-    await store.login(email, password);
+    await authenticate({ email, password });
+    navigate("/");
   };
   return (
     <Block>
@@ -35,15 +35,12 @@ const LoginPage: React.FC = () => {
         component="form"
         onSubmit={handleSubmit(handleTransfer)}
         sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
           background: "rgba(4, 20, 31, 0.9)",
           border: "1px solid #002F42",
           borderRadius: "4px",
           width: "70%",
           minHeight: "500px",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
         }}
         noValidate
         autoComplete="off"
@@ -59,27 +56,35 @@ const LoginPage: React.FC = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            padding: "50px 0",
             gap: 2,
           }}
         >
           <MLTypography variant={"h3"}>Login</MLTypography>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <MLInput wide type="text" label={"E-mail Address"} {...field} />
-            )}
-            name={"email"}
-          />
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <MLInput type="password" wide label={"Password"} {...field} />
-            )}
-            name={"password"}
-          />
-          <MLButton loading={false} variant={"contained"} type={"submit"}>
+          <Box display={"flex"} flexDirection={"column"} width={"65%"} gap={2}>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <MLInput wide type="text" label={"E-mail Address"} {...field} />
+              )}
+              name={"email"}
+            />
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <MLInput type="password" wide label={"Password"} {...field} />
+              )}
+              name={"password"}
+            />
+          </Box>
+          <MLButton
+            loading={loggingIn}
+            size={"large"}
+            variant={"contained"}
+            type={"submit"}
+          >
             <MLTypography>Login</MLTypography>
           </MLButton>
           <MLButton
@@ -96,4 +101,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default observer(LoginPage);
+export default LoginPage;

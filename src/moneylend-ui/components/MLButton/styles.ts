@@ -5,8 +5,8 @@ export const StyledButton = styled(Button)`
   &.MuiButton-contained {
     background: #0082b4;
     border-radius: 50px;
-    min-width: 200px;
-    min-height: 50px;
+    width: 200px;
+    height: 50px;
   }
   align-items: center;
   text-align: center;

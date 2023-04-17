@@ -3,7 +3,7 @@ import { styled, Box } from "@mui/material";
 export const Block = styled("div")`
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 80vh;
   align-items: center;
   justify-content: center;
   padding: 10px 20px;

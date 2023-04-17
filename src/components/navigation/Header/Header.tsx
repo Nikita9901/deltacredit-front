@@ -11,17 +11,19 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import { MLTypography, MLLogoImage } from "@moneylend-ui";
+import { MLTypography, MLLogoImage, MLButton } from "@moneylend-ui";
 import { StyledAppBar } from "./styles";
-import { observer } from "mobx-react-lite";
-import { useContext } from "react";
-import { Context } from "../../../index";
-
-const pages = ["Browse credits", "Top Investors"];
-const settings = ["Profile", "Account", "Dashboard"];
+import { useNavigate } from "react-router-dom";
+import {
+  useCurrentUser,
+  useIsAuthenticated,
+  useLogout,
+} from "../../../utils/hooks";
+const settings = ["Account", "Dashboard"];
 
 const Header: React.FC = () => {
-  const { store } = useContext(Context);
+  const navigate = useNavigate();
+  const logout = useLogout();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -44,11 +46,20 @@ const Header: React.FC = () => {
     setAnchorElUser(null);
   };
 
+  const isAuthed = useIsAuthenticated()[0];
+  const currentUser = useCurrentUser();
+
   return (
     <StyledAppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <MLLogoImage width={"70px"} />
+          <MLLogoImage
+            width={"70px"}
+            onClick={() => {
+              navigate("/");
+            }}
+            style={{ cursor: "pointer" }}
+          />
           <MLTypography
             variant="h6"
             noWrap
@@ -93,11 +104,16 @@ const Header: React.FC = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem
+                onClick={() => {
+                  navigate("/credits");
+                }}
+              >
+                <Typography textAlign="center">Browse credits</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Typography textAlign="center">Top Investors</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <CurrencyExchangeIcon
@@ -122,56 +138,91 @@ const Header: React.FC = () => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              onClick={() => {
+                navigate("/credits");
+              }}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Browse credits
+            </Button>
+            <Button
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Top Investors
+            </Button>
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+          {isAuthed ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    navigate(`/profile/${currentUser?.id}`);
+                  }}
+                >
+                  <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-              ))}
-              <MenuItem
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+                <MenuItem
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    logout();
+                  }}
+                >
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+          ) : (
+            <Box display={"flex"} gap={3}>
+              <MLButton
                 onClick={() => {
-                  store.logout();
+                  navigate("/login");
                 }}
               >
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>
+                login
+              </MLButton>
+              <MLButton
+                onClick={() => {
+                  navigate("/signup");
+                }}
+                variant={"contained"}
+                size={"small"}
+              >
+                signup
+              </MLButton>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </StyledAppBar>
   );
 };
-export default observer(Header);
+export default Header;

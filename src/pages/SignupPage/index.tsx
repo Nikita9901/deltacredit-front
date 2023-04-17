@@ -7,13 +7,22 @@ import { Divider, FormControlLabel, Checkbox } from "@mui/material";
 import { MLButton, MLInput, MLTypography } from "@moneylend-ui";
 import { Block } from "./styles";
 import MLLogoImage from "../../moneylend-ui/components/MLLogoImage";
-import { useContext } from "react";
-import { Context } from "../../index";
+import { useDispatch } from "react-redux";
+import { signup } from "../../store/actions";
+import { AppDispatch } from "../../store/store";
+import { useCurrentUser } from "../../utils/hooks";
+import { useEffect } from "react";
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
+  const userId = useCurrentUser()?.id;
+  useEffect(() => {
+    if (userId) {
+      navigate(`/profile/${userId}/edit`);
+    }
+  }, [userId]);
 
-  const { store } = useContext(Context);
   const {
     handleSubmit,
     control,
@@ -27,18 +36,7 @@ export default function SignupPage() {
     email,
     password,
   }) => {
-    await store.signup(email, password);
-    // await axios
-    //   .post("http://127.0.0.1:8000/api/signup", {
-    //     email,
-    //     password,
-    //   })
-    //   .then(function (res) {
-    //     navigate("/");
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+    await dispatch(signup(email, password));
   };
 
   return (
