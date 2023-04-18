@@ -7,19 +7,22 @@ import { Divider, FormControlLabel, Checkbox } from "@mui/material";
 import { MLButton, MLInput, MLTypography } from "@moneylend-ui";
 import { Block } from "./styles";
 import MLLogoImage from "../../moneylend-ui/components/MLLogoImage";
-import { useDispatch } from "react-redux";
-import { signup } from "../../store/actions";
-import { AppDispatch } from "../../store/store";
-import { useCurrentUser } from "../../utils/hooks";
+import { useCurrentUser, useRegistration } from "../../utils/hooks";
 import { useEffect } from "react";
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const dispatch: AppDispatch = useDispatch();
+  const [{ loading: signingIn }, registration] = useRegistration();
   const userId = useCurrentUser()?.id;
+  // useEffect(() => {
+  //   if (userId) {
+  //     navigate(`/profile/${userId}/edit`);
+  //   }
+  // }, [userId]);
   useEffect(() => {
+    console.log(userId);
     if (userId) {
-      navigate(`/profile/${userId}/edit`);
+      navigate(`/`);
     }
   }, [userId]);
 
@@ -36,7 +39,9 @@ export default function SignupPage() {
     email,
     password,
   }) => {
-    await dispatch(signup(email, password));
+    await registration({ email, password }).then(() => {
+      navigate(`/profile/${userId}/edit`);
+    });
   };
 
   return (
@@ -114,7 +119,6 @@ export default function SignupPage() {
           <Box display={"flex"} flexDirection={"column"} width={"65%"} gap={2}>
             <Controller
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <MLInput type="text" label={"E-mail Address"} {...field} wide />
               )}
@@ -122,7 +126,6 @@ export default function SignupPage() {
             />
             <Controller
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <MLInput type="password" label={"Password"} {...field} wide />
               )}
@@ -130,7 +133,6 @@ export default function SignupPage() {
             />
             <Controller
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <MLInput
                   type="password"
@@ -149,7 +151,7 @@ export default function SignupPage() {
             </Box>
           </Box>
 
-          <MLButton loading={false} variant={"contained"} type={"submit"}>
+          <MLButton loading={signingIn} variant={"contained"} type={"submit"}>
             <MLTypography>Sign Up</MLTypography>
           </MLButton>
           <MLButton

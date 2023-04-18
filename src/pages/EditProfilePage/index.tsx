@@ -9,6 +9,7 @@ import {
 import { Box } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { IEditProfile } from "./types";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const EditProfilePage: React.FC = () => {
   const { profileId } = useParams();
@@ -60,17 +61,22 @@ const EditProfilePage: React.FC = () => {
         onSubmit={handleSubmit(handleTransfer)}
         sx={{
           background: "rgba(4, 20, 31, 0.9)",
+          padding: "50px 100px",
           border: "1px solid #002F42",
           borderRadius: "4px",
-          width: "70%",
+          width: "30%",
           minHeight: "500px",
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           gap: 2,
         }}
         noValidate
         autoComplete="off"
       >
+        <AccountCircleIcon
+          sx={{ color: "grey", width: "100px", height: "100px" }}
+        />
         <Controller
           control={control}
           rules={{ required: true }}

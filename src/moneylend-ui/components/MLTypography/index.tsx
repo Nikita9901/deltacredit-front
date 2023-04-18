@@ -6,7 +6,7 @@ import { Typography } from "@mui/material";
 const Index: React.FC<MLTypographyProps> = styled<React.FC<MLTypographyProps>>(
   ({ ...props }) => <Typography {...props} />
 )`
-  color: #e4e4e7;
+  color: ${(props) => props.color || "#e4e4e7"};
   font-family: "Poppins";
 `;
 

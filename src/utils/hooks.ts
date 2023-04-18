@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "src/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { editProfile, login, logout } from "../store/actions";
+import {
+  createCredit,
+  editProfile,
+  login,
+  logout,
+  signup,
+} from "../store/actions";
 import { useNavigate } from "react-router-dom";
 import UserService from "../services/UserService";
 import { IUser } from "../models/IUser";
+import { ICredit } from "../models/ICredit";
 
 export const useAuthenticate = (): [
   { loading: boolean },
@@ -30,8 +37,38 @@ export const useAuthenticate = (): [
     },
   ];
 };
+export const useRegistration = (): [
+  { loading: boolean },
+  (payload: { email: string; password: string }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+
+  return [
+    { loading },
+    async (payload: { email: string; password: string }) => {
+      setLoading(true);
+
+      try {
+        await dispatch(signup(payload.email, payload.password));
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
+  ];
+};
 export const useCurrentUser = () => {
   return useSelector((state: RootState) => state.auth)?.user;
+};
+
+export const useIsLoading = () => {
+  return (
+    useSelector((state: RootState) => state.auth)?.isLoading ||
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useSelector((state: RootState) => state.credits)?.isLoading
+  );
 };
 
 export const useEditProfile = (): [
@@ -119,12 +156,51 @@ export const useGetUserById = (
   }, [id]);
   return { user, isLoading: loading };
 };
+export const useCreateCredit = (): [
+  { loading: boolean },
+  (payload: {
+    amount: number;
+    percent: number;
+    period: number;
+    description: string;
+  }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
 
-export const useGetCreditsList = () => {
   return [
-    useSelector((state: RootState) => state.credits)?.credits,
-    useSelector((state: RootState) => state.credits)?.isLoading,
+    { loading },
+    async (payload: {
+      amount: number;
+      percent: number;
+      period: number;
+      description: string;
+    }) => {
+      setLoading(true);
+
+      try {
+        await dispatch(
+          createCredit(
+            payload.amount,
+            payload.percent,
+            payload.period,
+            payload.description
+          )
+        );
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
   ];
+};
+
+export const useGetCreditsList = (): [ICredit[], boolean] => {
+  const credits = useSelector((state: RootState) => state.credits);
+  const creditList = credits.credits || ([] as ICredit[]);
+  const isLoading = credits.isLoading || false;
+  return [creditList, isLoading];
 };
 // export function useCurrentUser(): UserData | Partial<UserData> {
 //   return (

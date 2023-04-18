@@ -1,17 +1,19 @@
 import React, { useEffect } from "react";
-import { MLTypography } from "@moneylend-ui";
 import { useGetCreditsList } from "../../utils/hooks";
 import Layout from "../../components/Layout";
+import CreditView from "./components/CreditView";
+import { Box } from "@mui/material";
 
 const CreditsListPage: React.FC = () => {
   const [credits, loading] = useGetCreditsList();
-  useEffect(() => {
-    console.log(credits);
-  }, [loading]);
 
   return (
-    <Layout loading={false}>
-      <MLTypography>hifasdfadsfhkadsjgfkjadsgfkjadskjgakdshg</MLTypography>
+    <Layout loading={loading as boolean}>
+      <Box display={"flex"} flexDirection={"column"}>
+        {credits.map((credit) => (
+          <CreditView credit={credit} />
+        ))}
+      </Box>
     </Layout>
   );
 };

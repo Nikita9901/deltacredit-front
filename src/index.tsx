@@ -4,6 +4,7 @@ import store from "./store/store";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
+import ModalProvider from "mui-modal-provider";
 // import Store from "./store/store";
 
 // interface State {
@@ -19,9 +20,11 @@ const root = ReactDOM.createRoot(
 root.render(
   // <Context.Provider value={{ store }}>
   <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <ModalProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </ModalProvider>
   </Provider>
   // </Context.Provider>
 );

@@ -8,14 +8,14 @@ import {
 } from "../types";
 import { ICredit } from "../../models/ICredit";
 
-const initialAuthState: CreditsState = {
-  credits: [{} as ICredit],
-  isLoading: false,
+const initialCreditsState: CreditsState = {
+  credits: [] as ICredit[],
+  isLoading: true,
   error: null,
 };
 
-const authReducer = (
-  state = initialAuthState,
+const creditsReducer = (
+  state = initialCreditsState,
   action: CreditsActionTypes
 ): CreditsState => {
   switch (action.type) {
@@ -32,4 +32,4 @@ const authReducer = (
   }
 };
 
-export default authReducer;
+export default creditsReducer;

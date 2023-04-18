@@ -69,7 +69,7 @@ export const login =
       dispatch(setUser(response.data.user));
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorAuth(e.response?.data?.message || "Error"));
     }
   };
 export const editProfile =
@@ -89,11 +89,10 @@ export const editProfile =
         phone_number,
         username
       );
-      console.log(response.data);
       dispatch(setUser(response.data));
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorAuth(e.response?.data?.message || "Error"));
     }
   };
 
@@ -110,7 +109,7 @@ export const signup =
       dispatch(setUser(response.data.user));
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorAuth(e.response?.data?.message || "Error"));
     }
   };
 
@@ -124,7 +123,7 @@ export const logout =
       dispatch(setUser({}));
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorAuth(e.response?.data?.message || "Error"));
     }
   };
 
@@ -157,7 +156,7 @@ export const getCreditsList =
       dispatch(setCredits(response.data));
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorCredits(e.response?.data?.message || "Error"));
     } finally {
       dispatch(setLoadingCredits(false));
     }
@@ -170,6 +169,27 @@ export const getUserById =
       const response = await UserService.fetchUserId(id);
     } catch (e) {
       // @ts-ignore
-      dispatch(setError(e.response?.data?.message || "Error"));
+      dispatch(setErrorAuth(e.response?.data?.message || "Error"));
+    }
+  };
+
+export const createCredit =
+  (
+    amount: number,
+    percent: number,
+    period: number,
+    description: string
+  ): ThunkAction<void, RootState, unknown, CreditsActionTypes> =>
+  async (dispatch: AppDispatch) => {
+    try {
+      const response = await CreditService.createCredit(
+        amount,
+        percent,
+        period,
+        description
+      );
+    } catch (e) {
+      // @ts-ignore
+      dispatch(setErrorCredits(e.response?.data?.message || "Error"));
     }
   };

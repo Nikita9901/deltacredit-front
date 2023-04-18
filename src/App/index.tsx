@@ -3,12 +3,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { routesConfig } from "../routes/routesConfig";
 import { Box } from "@mui/material";
 import { Header } from "../components/navigation";
-import { AppDispatch } from "../store/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
 import { checkAuth, getCreditsList } from "../store/actions";
+import { useIsLoading } from "../utils/hooks";
+import Layout from "../components/Layout";
 
 const App: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.auth)?.isLoading;
   useEffect(() => {
     dispatch(checkAuth());
     dispatch(getCreditsList());
@@ -30,26 +33,30 @@ const App: React.FC = () => {
       />
 
       <BrowserRouter>
-        <Header />
-        <Routes>
-          {routesConfig.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              element={
-                <Box
-                  display={"flex"}
-                  height={"100%"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                  paddingTop={"75px"}
-                >
-                  {route.element}
-                </Box>
-              }
-            />
-          ))}
-        </Routes>
+        {!loading && (
+          <>
+            <Header />
+            <Routes>
+              {routesConfig.map((route, index) => (
+                <Route
+                  key={index}
+                  path={route.path}
+                  element={
+                    <Box
+                      display={"flex"}
+                      height={"100%"}
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      paddingTop={"75px"}
+                    >
+                      {route.element}
+                    </Box>
+                  }
+                />
+              ))}
+            </Routes>
+          </>
+        )}
       </BrowserRouter>
     </Box>
   );
