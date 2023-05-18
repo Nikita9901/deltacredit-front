@@ -5,78 +5,95 @@ import {
   useCreateCredit,
   useCurrentUser,
   useGetUserById,
+  useGetUserCredits,
 } from "../../utils/hooks";
 import Layout from "../../components/Layout";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useMLModal } from "@moneylend-ui";
 import CreateCreditModal from "./components/CreateCredit";
 import { ShowFnOutput } from "mui-modal-provider";
+import CreditView from "../CreditsListPage/components/CreditView";
 
 const ProfilePage: React.FC = () => {
   const { showModal } = useMLModal();
   const { profileId } = useParams();
   const currentUser = useCurrentUser();
+  const { userCredits, isLoading: loading } = useGetUserCredits(profileId);
   const navigate = useNavigate();
   const { user, isLoading } = useGetUserById(profileId);
-  useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading]);
   return (
     <Layout loading={isLoading}>
-      <Box display={"flex"}>
-        <Box>
-          <AccountCircleIcon
-            sx={{ color: "grey", width: "300px", height: "300px" }}
-          />
+      <Box>
+        <Box display={"flex"} marginBottom={"50px"}>
+          <Box>
+            <AccountCircleIcon
+              sx={{ color: "grey", width: "300px", height: "300px" }}
+            />
+          </Box>
+          <Box>
+            {user.name && (
+              <MLTypography variant={"h4"}>{`Name: ${user.name}`}</MLTypography>
+            )}
+            {user.surname && (
+              <MLTypography
+                variant={"h4"}
+              >{`Surname: ${user.surname}`}</MLTypography>
+            )}
+            {user.email && (
+              <MLTypography
+                variant={"h4"}
+              >{`Email: ${user.email}`}</MLTypography>
+            )}
+            {user.phone_number && (
+              <MLTypography
+                variant={"h4"}
+              >{`Phone: ${user.phone_number}`}</MLTypography>
+            )}
+          </Box>
+          {currentUser?.id?.toString() === user?.id?.toString() && (
+            <MLButton
+              variant={"contained"}
+              onClick={() => {
+                navigate(`/profile/${profileId}/edit`);
+              }}
+            >
+              Edit Profile
+            </MLButton>
+          )}
+          {currentUser?.id?.toString() === user?.id?.toString() && (
+            <MLButton
+              variant={"contained"}
+              onClick={() => {
+                // @ts-ignore
+                showModal(CreateCreditModal);
+              }}
+            >
+              Create Money Offer
+            </MLButton>
+          )}
         </Box>
-        <Box>
-          {user.name && (
-            <MLTypography variant={"h4"}>{`Name: ${user.name}`}</MLTypography>
-          )}
-          {user.surname && (
-            <MLTypography
-              variant={"h4"}
-            >{`Surname: ${user.surname}`}</MLTypography>
-          )}
-          {user.email && (
-            <MLTypography variant={"h4"}>{`Email: ${user.email}`}</MLTypography>
-          )}
-          {user.phone_number && (
-            <MLTypography
-              variant={"h4"}
-            >{`Phone: ${user.phone_number}`}</MLTypography>
-          )}
-        </Box>
-        {currentUser?.id?.toString() === user?.id?.toString() && (
-          <MLButton
-            variant={"contained"}
-            onClick={() => {
-              navigate(`/profile/${profileId}/edit`);
-            }}
-          >
-            Edit Profile
-          </MLButton>
-        )}
-        {currentUser?.id?.toString() === user?.id?.toString() && (
-          <MLButton
-            variant={"contained"}
-            onClick={() => {
-              console.log("hi");
-              let modal: ShowFnOutput<void>;
-              // @ts-ignore
-              showModal(CreateCreditModal);
-              // createCredit({
-              //   amount: 500,
-              //   period: 300,
-              //   percent: 25,
-              //   description: "first credit for you",
-              // });
-            }}
-          >
-            Create Money Offer
-          </MLButton>
-        )}
+        <MLTypography variant={"h4"} marginBottom={"20px"}>
+          User Credits:{" "}
+        </MLTypography>
+        <Grid container spacing={2} display={"flex"} justifyContent={"center"}>
+          {userCredits.map((credit) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              sx={{
+                minHeight: "200px",
+                minWidth: "320px",
+                marginBottom: "20px",
+              }}
+            >
+              <CreditView credit={credit} />
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Layout>
   );

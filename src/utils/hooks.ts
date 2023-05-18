@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "src/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  createBorrowRequest,
   createCredit,
   editProfile,
+  getBorrowRequestsCredit,
   login,
   logout,
   signup,
@@ -12,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import UserService from "../services/UserService";
 import { IUser } from "../models/IUser";
 import { ICredit } from "../models/ICredit";
+import CreditService from "../services/CreditService";
+import { IBorrow } from "../models/IBorrow";
 
 export const useAuthenticate = (): [
   { loading: boolean },
@@ -156,6 +160,25 @@ export const useGetUserById = (
   }, [id]);
   return { user, isLoading: loading };
 };
+
+export const useGetUserCredits = (
+  user_id: string | undefined
+): { isLoading: boolean; userCredits: ICredit[] } => {
+  const [userCredits, setUserCredits] = useState([] as ICredit[]);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchCredits = async () => {
+      if (user_id) {
+        setLoading(true);
+        const response = await CreditService.getUsersCredits(user_id);
+        setLoading(false);
+        setUserCredits(response.data);
+      }
+    };
+    fetchCredits();
+  }, [user_id]);
+  return { userCredits, isLoading: loading };
+};
 export const useCreateCredit = (): [
   { loading: boolean },
   (payload: {
@@ -201,6 +224,68 @@ export const useGetCreditsList = (): [ICredit[], boolean] => {
   const creditList = credits.credits || ([] as ICredit[]);
   const isLoading = credits.isLoading || false;
   return [creditList, isLoading];
+};
+
+export const useCreateBorrowRequest = (): [
+  { loading: boolean },
+  (payload: {
+    creditId: number;
+    amount: number;
+    percent: number;
+  }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const userId = useCurrentUser()?.id;
+
+  return [
+    { loading },
+    async (payload: { creditId: number; amount: number; percent: number }) => {
+      setLoading(true);
+
+      try {
+        await dispatch(
+          createBorrowRequest(
+            userId,
+            payload.creditId,
+            payload.amount,
+            payload.percent
+          )
+        );
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
+  ];
+};
+
+export const useGetBorrowRequestsCredit = (): [
+  { loading: boolean },
+  (payload: { creditId: number | string }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const userId = useCurrentUser()?.id;
+
+  return [
+    { loading },
+    async (payload: { creditId: number | string }) => {
+      setLoading(true);
+
+      try {
+        const borrowRequests = await dispatch(
+          getBorrowRequestsCredit(payload.creditId)
+        );
+        setLoading(false);
+        return borrowRequests;
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
+  ];
 };
 // export function useCurrentUser(): UserData | Partial<UserData> {
 //   return (

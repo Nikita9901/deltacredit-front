@@ -26,8 +26,11 @@ const App: React.FC = () => {
         top={0}
         left={0}
         sx={{
-          backgroundImage: `url(../../images/background.png)`,
-          backgroundSize: "100%",
+          backgroundImage: "url(../../images/background.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "100vh",
         }}
         zIndex={"-1"}
       />

@@ -8,6 +8,7 @@ import {
 } from "../pages";
 import { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
+import CreditPage from "../pages/CreditPage";
 
 const outleted = (Component: JSX.Element) => (
   <>
@@ -51,5 +52,10 @@ export const routesConfig: route[] = [
     path: `/credits`,
     exact: true,
     element: <CreditsListPage />,
+  },
+  {
+    path: `/credits/:creditId`,
+    exact: true,
+    element: <CreditPage />,
   },
 ];

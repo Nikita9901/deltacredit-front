@@ -44,7 +44,6 @@ const EditProfilePage: React.FC = () => {
     const iSurname = surname || user?.surname;
     const iPhone_number = phone_number || user?.phone_number;
     const iUsername = username || user?.username;
-    // console.log(iName, iSurname, iPhone_number, iUsername);
     await edit({
       name: iName,
       surname: iSurname,
@@ -79,30 +78,53 @@ const EditProfilePage: React.FC = () => {
         />
         <Controller
           control={control}
-          rules={{ required: true }}
           render={({ field }) => (
-            <MLInput type="text" wide label={"Name"} {...field} />
+            <MLInput
+              type="text"
+              wide
+              label={"Name"}
+              {...field}
+              placeholder={user?.name}
+            />
           )}
           name={"name"}
         />
         <Controller
           control={control}
           render={({ field }) => (
-            <MLInput type="text" wide label={"Surname"} {...field} />
+            <MLInput
+              type="text"
+              wide
+              label={"Surname"}
+              {...field}
+              placeholder={user?.surname}
+            />
           )}
           name={"surname"}
         />
         <Controller
           control={control}
           render={({ field }) => (
-            <MLInput type="text" wide label={"Phone number"} {...field} />
+            <MLInput
+              type="text"
+              wide
+              label={"Phone number"}
+              {...field}
+              placeholder={user?.phone_number}
+            />
           )}
           name={"phone_number"}
         />
         <Controller
           control={control}
           render={({ field }) => (
-            <MLInput type="text" wide label={"Username"} {...field} />
+            <MLInput
+              type="text"
+              wide
+              label={"Username"}
+              {...field}
+              placeholder={user?.username}
+            />
           )}
           name={"username"}
         />

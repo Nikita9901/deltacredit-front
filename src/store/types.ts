@@ -1,5 +1,6 @@
 import { IUser } from "../models/IUser";
 import { ICredit } from "../models/ICredit";
+import { IBorrow } from "../models/IBorrow";
 
 // AUTH константы
 export const SET_AUTH = "SET_AUTH";
@@ -12,6 +13,7 @@ export const CLEAR_ERROR = "CLEAR_ERROR";
 export const SET_CREDITS = "SET_CREDITS";
 export const SET_LOADING_CREDITS = "SET_LOADING_AUTH";
 export const SET_ERROR_CREDITS = "SET_ERROR_AUTH";
+export const SET_ERROR_BORROWS = "SET_ERROR_BORROWS";
 
 export interface AuthState {
   user: IUser;
@@ -21,6 +23,11 @@ export interface AuthState {
 }
 export interface CreditsState {
   credits: ICredit[];
+  isLoading: boolean;
+  error?: any;
+}
+export interface BorrowsState {
+  borrows: IBorrow[];
   isLoading: boolean;
   error?: any;
 }
@@ -52,6 +59,12 @@ export interface SetErrorCreditsAction {
   type: typeof SET_ERROR_CREDITS;
   payload: any;
 }
+
+export interface SetErrorBorrowsAction {
+  type: typeof SET_ERROR_BORROWS;
+  payload: any;
+}
+
 export interface SetErrorAuthAction {
   type: typeof SET_ERROR_AUTH;
   payload: any;
@@ -73,3 +86,5 @@ export type AuthActionTypes =
   | SetLoadingAuthAction
   | SetErrorAuthAction
   | ClearErrorAction;
+
+export type BorrowActionTypes = SetErrorBorrowsAction | ClearErrorAction;

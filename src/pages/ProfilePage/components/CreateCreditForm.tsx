@@ -3,10 +3,11 @@ import { Box, Divider } from "@mui/material";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ITransferField } from "./types";
 import { MLButton, MLInput, MLTypography } from "@moneylend-ui";
-import { useCreateCredit } from "../../../utils/hooks";
+import { useCreateCredit, useGetCreditsList } from "../../../utils/hooks";
 
 const CreateCreditForm = ({ close }: { close: () => void }) => {
   const [{ loading }, createCredit] = useCreateCredit();
+  useGetCreditsList();
   const {
     handleSubmit,
     control,
@@ -23,7 +24,7 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
     description,
   }) => {
     await createCredit({ amount, percent, period, description });
-    close();
+    await close();
   };
   return (
     <Box>

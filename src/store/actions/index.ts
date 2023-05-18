@@ -4,12 +4,14 @@ import {
   AuthActionTypes,
   CLEAR_ERROR,
   CreditsActionTypes,
+  BorrowActionTypes,
   SET_AUTH,
   SET_CREDITS,
   SET_ERROR_AUTH,
   SET_LOADING_AUTH,
   SET_LOADING_CREDITS,
   SET_ERROR_CREDITS,
+  SET_ERROR_BORROWS,
   SET_USER,
 } from "../types";
 import AuthService from "../../services/AuthService";
@@ -19,6 +21,7 @@ import { AuthResponse } from "../../models/response/AuthResponse";
 import UserService from "../../services/UserService";
 import { ICredit } from "../../models/ICredit";
 import CreditService from "../../services/CreditService";
+import BorrowService from "../../services/BorrowService";
 
 export const setAuth = (bool: boolean): AuthActionTypes => ({
   type: SET_AUTH,
@@ -47,8 +50,12 @@ export const setErrorAuth = (error: string): AuthActionTypes => ({
   type: SET_ERROR_AUTH,
   payload: error,
 });
-export const setErrorCredits = (error: string): AuthActionTypes => ({
+export const setErrorCredits = (error: string): CreditsActionTypes => ({
   type: SET_ERROR_CREDITS,
+  payload: error,
+});
+export const setErrorBorrows = (error: string): BorrowActionTypes => ({
+  type: SET_ERROR_BORROWS,
   payload: error,
 });
 
@@ -163,7 +170,9 @@ export const getCreditsList =
   };
 
 export const getUserById =
-  (id: string): ThunkAction<void, RootState, unknown, AuthActionTypes> =>
+  (
+    id: string | undefined
+  ): ThunkAction<void, RootState, unknown, AuthActionTypes> =>
   async (dispatch: AppDispatch) => {
     try {
       const response = await UserService.fetchUserId(id);
@@ -191,5 +200,41 @@ export const createCredit =
     } catch (e) {
       // @ts-ignore
       dispatch(setErrorCredits(e.response?.data?.message || "Error"));
+    }
+  };
+
+export const createBorrowRequest =
+  (
+    userId: string | number,
+    creditId: number | string,
+    amount: number,
+    percent: number
+  ): ThunkAction<void, RootState, unknown, CreditsActionTypes> =>
+  async (dispatch: AppDispatch) => {
+    try {
+      const response = await BorrowService.createBorrowRequest(
+        userId,
+        creditId,
+        amount,
+        percent
+      );
+      return response.data;
+    } catch (e) {
+      // @ts-ignore
+      dispatch(setErrorBorrows(e.response?.data?.message || "Error"));
+    }
+  };
+
+export const getBorrowRequestsCredit =
+  (
+    creditId: number | string
+  ): ThunkAction<void, RootState, unknown, CreditsActionTypes> =>
+  async (dispatch: AppDispatch) => {
+    try {
+      const response = await BorrowService.fetchBorrowsForCredit(creditId);
+      return response.data;
+    } catch (e) {
+      // @ts-ignore
+      dispatch(setErrorBorrows(e.response?.data?.message || "Error"));
     }
   };

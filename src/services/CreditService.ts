@@ -26,4 +26,9 @@ export default class CreditService {
       credit_id,
     });
   }
+  static async getUsersCredits(
+    user_id: string | number
+  ): Promise<AxiosResponse<ICredit[]>> {
+    return $api.post<ICredit[]>(`/get-userCredits/${user_id}`);
+  }
 }
