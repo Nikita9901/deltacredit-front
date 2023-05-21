@@ -31,4 +31,8 @@ export default class CreditService {
   ): Promise<AxiosResponse<ICredit[]>> {
     return $api.post<ICredit[]>(`/get-userCredits/${user_id}`);
   }
+
+  static async exportToCsv(): Promise<any> {
+    return $api.post<ICredit>(`/exportToCsv`);
+  }
 }

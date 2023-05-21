@@ -1,16 +1,23 @@
-import React, { useMemo } from "react";
-import { useGetCreditsList, useGetUserById } from "../../utils/hooks";
+import React, { useEffect, useMemo } from "react";
+import {
+  useCurrentUser,
+  useGetCreditsList,
+  useGetUserBorrows,
+} from "../../utils/hooks";
 import Layout from "../../components/Layout";
-import CreditView from "./components/CreditView";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { createColumnHelper } from "../../moneylend-ui/utils";
 import { ICredit } from "../../models/ICredit";
 import MLTable from "../../moneylend-ui/components/MLTable";
-import { MLButton } from "@moneylend-ui";
 import { InvestorName } from "./components/InvestorInfo";
+import Action from "../ProfilePage/components/Action";
+import { MLButton, useMLModal } from "@moneylend-ui";
+import ExportModal from "../../components/modals/ExportModal";
 
 const CreditsListPage: React.FC = () => {
   const [credits, loading] = useGetCreditsList();
+  const { isLoading, borrows } = useGetUserBorrows();
+  const { showModal } = useMLModal();
 
   const columnHelper = createColumnHelper<ICredit>();
   const columns = useMemo(
@@ -18,38 +25,46 @@ const CreditsListPage: React.FC = () => {
       columnHelper.display({
         header: "Investor",
         id: "investor",
-        cell: ({ row: { original } }) => (
-          <InvestorName investorId={original.user_id} />
-        ),
+        cell: ({ row: { original } }) => <InvestorName credit={original} />,
       }),
       columnHelper.accessor("amount", {
         header: "Amount",
-        cell: ({ getValue, row: { original } }) => <Box>{getValue()} BYN</Box>,
+        cell: ({ getValue }) => <Box>{getValue()} BYN</Box>,
       }),
       columnHelper.accessor("percent", {
         id: "percent",
         header: "Percent",
-        cell: ({ getValue, row }) => <Box>{getValue()} %</Box>,
+        cell: ({ getValue }) => <Box>{getValue()} %</Box>,
         sortingFn: "alphanumeric",
       }),
       columnHelper.accessor("period_date", {
         id: "period_date",
         header: "Period",
-        cell: ({ getValue, row }) => <Box>{getValue()}</Box>,
+        cell: ({ getValue }) => <Box>{getValue()}</Box>,
         sortingFn: "alphanumeric",
       }),
       columnHelper.display({
         header: "",
         id: "action",
-        cell: (props) => <MLButton>Borrow request</MLButton>,
+        cell: ({ row: { original } }) => (
+          <Action credit={original} borrows={borrows} isLoading={isLoading} />
+        ),
       }),
     ],
-    [columnHelper, credits]
+    [borrows, isLoading, credits]
   );
 
   return (
     <Layout loading={loading as boolean}>
       <Box>
+        <MLButton
+          onClick={() => {
+            // @ts-ignore
+            showModal(ExportModal);
+          }}
+        >
+          Export to csv
+        </MLButton>
         <MLTable
           prefixId={"credits"}
           columns={columns}

@@ -228,7 +228,7 @@ export const createBorrowRequest =
 export const getBorrowRequestsCredit =
   (
     creditId: number | string
-  ): ThunkAction<void, RootState, unknown, CreditsActionTypes> =>
+  ): ThunkAction<void, RootState, unknown, BorrowActionTypes> =>
   async (dispatch: AppDispatch) => {
     try {
       const response = await BorrowService.fetchBorrowsForCredit(creditId);

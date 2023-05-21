@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Icon } from "./styles";
 import { MLTypography } from "@moneylend-ui";
 import Box from "@mui/system/Box/Box";
@@ -7,19 +7,18 @@ import { Tooltip } from "@mui/material";
 import { StyledVerifiedIcon } from "./styles";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useGetUserById } from "../../../utils/hooks";
+import { ICredit } from "../../../models/ICredit";
 
 export const InvestorName = ({
   prefixId,
-  investorId,
+  credit,
 }: {
   prefixId?: string;
-  investorId: string | undefined;
+  credit: ICredit;
 }) => {
-  const investor = useGetUserById(investorId);
-
   return (
     <Box
-      id={prefixId && `${prefixId}__service-${investorId}`}
+      id={prefixId && `${prefixId}__service-${credit.user_id}`}
       component={Link}
       to={generatePath("/")}
       sx={{
@@ -44,11 +43,11 @@ export const InvestorName = ({
         }}
       >
         <MLTypography fontWeight="medium" color="#C1C1C8" whiteSpace="normal">
-          {investor.user.name}
+          {credit.name}
         </MLTypography>
         <div>
           <MLTypography variant="body2" fontWeight="medium" color="#706F82">
-            {investor.user.username}
+            {credit.username}
           </MLTypography>
         </div>
       </Box>

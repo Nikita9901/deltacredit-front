@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppDispatch, RootState } from "src/store/store";
 import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastOptions } from "react-toastify";
 import {
   createBorrowRequest,
   createCredit,
   editProfile,
-  getBorrowRequestsCredit,
   login,
   logout,
   signup,
@@ -16,6 +16,31 @@ import { IUser } from "../models/IUser";
 import { ICredit } from "../models/ICredit";
 import CreditService from "../services/CreditService";
 import { IBorrow } from "../models/IBorrow";
+import BorrowService from "../services/BorrowService";
+import { Toaster } from "@moneylend-ui";
+
+type ToastFn = (text: string, extraOptions?: ToastOptions) => void;
+
+const showToast =
+  (type: "success" | "error" | "info") =>
+  (message: string, options?: ToastOptions) =>
+    toast(<Toaster variant={type} caption={message} />, {
+      type: type,
+      icon: false,
+      ...options,
+    } as ToastOptions);
+
+export function useToast(): {
+  success: ToastFn;
+  info: ToastFn;
+  error: ToastFn;
+} {
+  return {
+    success: showToast("success"),
+    error: showToast("error"),
+    info: showToast("info"),
+  };
+}
 
 export const useAuthenticate = (): [
   { loading: boolean },
@@ -261,25 +286,80 @@ export const useCreateBorrowRequest = (): [
   ];
 };
 
-export const useGetBorrowRequestsCredit = (): [
+export const useGetBorrowRequestsCredit = (
+  creditId: number
+): { isLoading: boolean; borrows: IBorrow[] } => {
+  const isLoadingRef = useRef(false);
+  const borrowsRef = useRef<IBorrow[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchBorrows = async () => {
+      if (creditId) {
+        isLoadingRef.current = true;
+        const response = await BorrowService.fetchBorrowsForCredit(creditId);
+
+        if (isMounted) {
+          isLoadingRef.current = false;
+          borrowsRef.current = response.data;
+        }
+      }
+    };
+
+    fetchBorrows();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [creditId]);
+
+  return { borrows: borrowsRef.current, isLoading: isLoadingRef.current };
+};
+
+export const useGetUserBorrows = (): {
+  isLoading: boolean;
+  borrows: IBorrow[];
+} => {
+  const [loading, setLoading] = useState(false);
+  const [borrows, setBorrows] = useState<IBorrow[]>([]);
+  const userId = useCurrentUser()?.id;
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      if (userId) {
+        setLoading(true);
+        const response = await BorrowService.fetchUserBorrows(userId);
+        setBorrows(response.data);
+        setLoading(false);
+      }
+    };
+    fetchCredits();
+  }, []);
+  return { borrows, isLoading: loading };
+};
+
+export const useExportCreditsToCsv = (): [
   { loading: boolean },
-  (payload: { creditId: number | string }) => Promise<void>
+  () => Promise<void>
 ] => {
   const [loading, setLoading] = useState(false);
-  const dispatch: AppDispatch = useDispatch();
-  const userId = useCurrentUser()?.id;
 
   return [
     { loading },
-    async (payload: { creditId: number | string }) => {
+    async () => {
       setLoading(true);
 
       try {
-        const borrowRequests = await dispatch(
-          getBorrowRequestsCredit(payload.creditId)
-        );
+        const response = await CreditService.exportToCsv();
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "credits.csv";
+        a.click();
+        URL.revokeObjectURL(url);
         setLoading(false);
-        return borrowRequests;
       } catch (e) {
         setLoading(false);
         throw e;
@@ -287,6 +367,38 @@ export const useGetBorrowRequestsCredit = (): [
     },
   ];
 };
+
+// export const useGetUserBorrows = (
+//   userId: number | string
+// ): { isLoading: boolean; borrows: IBorrow[] } => {
+//   const isLoadingRef = useRef(false);
+//   const borrowsRef = useRef<IBorrow[]>([]);
+//
+//   useEffect(() => {
+//     let isMounted = true;
+//
+//     const fetchBorrows = async () => {
+//       if (userId) {
+//         isLoadingRef.current = true;
+//         const response = await BorrowService.fetchUserBorrows(userId);
+//
+//         if (isMounted) {
+//           isLoadingRef.current = false;
+//           borrowsRef.current = response.data;
+//         }
+//       }
+//     };
+//
+//     fetchBorrows();
+//
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [userId]);
+//
+//   return { borrows: borrowsRef.current, isLoading: isLoadingRef.current };
+// };
+
 // export function useCurrentUser(): UserData | Partial<UserData> {
 //   return (
 //       useSelector((state: RootState) => state.user)?.user || ({} as UserData)

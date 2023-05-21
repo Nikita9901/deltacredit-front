@@ -19,6 +19,11 @@ export default class BorrowService {
   static fetchBorrowsForCredit(
     creditId: number | string
   ): Promise<AxiosResponse<IBorrow[]>> {
-    return $api.post<IBorrow[]>(`/creditlist/${creditId}`);
+    return $api.post<IBorrow[]>(`/get-borrows/${creditId}`);
+  }
+  static fetchUserBorrows(
+    userId: number | string
+  ): Promise<AxiosResponse<IBorrow[]>> {
+    return $api.post<IBorrow[]>(`/get-userBorrows/${userId}`);
   }
 }

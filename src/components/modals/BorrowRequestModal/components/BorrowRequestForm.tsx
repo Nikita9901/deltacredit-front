@@ -1,13 +1,18 @@
 import React from "react";
-import { Box, Divider } from "@mui/material";
+import { Box } from "@mui/material";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ITransferField } from "./types";
 import { MLButton, MLInput } from "@moneylend-ui";
-import { useCreateCredit, useGetCreditsList } from "../../../utils/hooks";
+import { useCreateBorrowRequest } from "../../../../utils/hooks";
 
-const CreateCreditForm = ({ close }: { close: () => void }) => {
-  const [{ loading }, createCredit] = useCreateCredit();
-  useGetCreditsList();
+const BorrowRequestForm = ({
+  close,
+  creditId,
+}: {
+  close: () => void;
+  creditId: number;
+}) => {
+  const [{ loading }, createBorrowRequest] = useCreateBorrowRequest();
   const {
     handleSubmit,
     control,
@@ -20,10 +25,8 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
   const handleTransfer: SubmitHandler<ITransferField> = async ({
     amount,
     percent,
-    period,
-    description,
   }) => {
-    await createCredit({ amount, percent, period, description });
+    await createBorrowRequest({ creditId, amount, percent });
     await close();
   };
   return (
@@ -49,7 +52,7 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <MLInput wide type="text" label={"Amount:"} {...field} />
+                <MLInput wide type="text" label={"Amount (BYN):"} {...field} />
               )}
               name={"amount"}
             />
@@ -57,25 +60,9 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <MLInput type="text" wide label={"Percent:"} {...field} />
+                <MLInput type="text" wide label={"Percent (%):"} {...field} />
               )}
               name={"percent"}
-            />
-            <Controller
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <MLInput type="text" wide label={"Period:"} {...field} />
-              )}
-              name={"period"}
-            />
-            <Controller
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <MLInput type="text" wide label={"Description:"} {...field} />
-              )}
-              name={"description"}
             />
           </Box>
           <MLButton
@@ -84,7 +71,7 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
             variant={"contained"}
             type={"submit"}
           >
-            Create Credit
+            Request lending
           </MLButton>
         </Box>
       </Box>
@@ -92,4 +79,4 @@ const CreateCreditForm = ({ close }: { close: () => void }) => {
   );
 };
 
-export default CreateCreditForm;
+export default BorrowRequestForm;

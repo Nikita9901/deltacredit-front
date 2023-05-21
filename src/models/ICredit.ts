@@ -4,5 +4,8 @@ export interface ICredit {
   percent: number;
   period_date: number;
   description: string;
-  id: string | number;
+  id: number;
+  name: string;
+  surname: string;
+  username: string;
 }
