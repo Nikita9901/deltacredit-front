@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import ModalProvider from "mui-modal-provider";
+import { ToastContainer } from "react-toastify";
 // import Store from "./store/store";
 
 // interface State {
@@ -20,11 +21,16 @@ const root = ReactDOM.createRoot(
 root.render(
   // <Context.Provider value={{ store }}>
   <Provider store={store}>
-    <ModalProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </ModalProvider>
+    <ToastContainer
+      position="top-right"
+      autoClose={1000}
+      closeOnClick
+      draggable
+      closeButton={true}
+    />
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
   </Provider>
   // </Context.Provider>
 );

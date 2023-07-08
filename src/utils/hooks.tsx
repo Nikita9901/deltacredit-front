@@ -3,6 +3,7 @@ import { AppDispatch, RootState } from "src/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastOptions } from "react-toastify";
 import {
+  clearError,
   createBorrowRequest,
   createCredit,
   editProfile,
@@ -18,6 +19,7 @@ import CreditService from "../services/CreditService";
 import { IBorrow } from "../models/IBorrow";
 import BorrowService from "../services/BorrowService";
 import { Toaster } from "@moneylend-ui";
+import TransactionsService from "../services/TransactionsService";
 
 type ToastFn = (text: string, extraOptions?: ToastOptions) => void;
 
@@ -187,7 +189,7 @@ export const useGetUserById = (
 };
 
 export const useGetUserCredits = (
-  user_id: string | undefined
+  user_id: string | number | undefined
 ): { isLoading: boolean; userCredits: ICredit[] } => {
   const [userCredits, setUserCredits] = useState([] as ICredit[]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -286,6 +288,27 @@ export const useCreateBorrowRequest = (): [
   ];
 };
 
+export const useDeleteCredit = (): [
+  { loading: boolean },
+  (payload: { creditId: number }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
+  return [
+    { loading },
+    async (payload: { creditId: number }) => {
+      setLoading(true);
+
+      try {
+        await CreditService.deleteCredit(payload.creditId);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
+  ];
+};
+
 export const useGetBorrowRequestsCredit = (
   creditId: number
 ): { isLoading: boolean; borrows: IBorrow[] } => {
@@ -368,39 +391,24 @@ export const useExportCreditsToCsv = (): [
   ];
 };
 
-// export const useGetUserBorrows = (
-//   userId: number | string
-// ): { isLoading: boolean; borrows: IBorrow[] } => {
-//   const isLoadingRef = useRef(false);
-//   const borrowsRef = useRef<IBorrow[]>([]);
-//
-//   useEffect(() => {
-//     let isMounted = true;
-//
-//     const fetchBorrows = async () => {
-//       if (userId) {
-//         isLoadingRef.current = true;
-//         const response = await BorrowService.fetchUserBorrows(userId);
-//
-//         if (isMounted) {
-//           isLoadingRef.current = false;
-//           borrowsRef.current = response.data;
-//         }
-//       }
-//     };
-//
-//     fetchBorrows();
-//
-//     return () => {
-//       isMounted = false;
-//     };
-//   }, [userId]);
-//
-//   return { borrows: borrowsRef.current, isLoading: isLoadingRef.current };
-// };
+export const useDepositAmount = (): [
+  { loading: boolean },
+  (payload: { amount: number; userId: string | number }) => Promise<void>
+] => {
+  const [loading, setLoading] = useState(false);
 
-// export function useCurrentUser(): UserData | Partial<UserData> {
-//   return (
-//       useSelector((state: RootState) => state.user)?.user || ({} as UserData)
-//   );
-// }
+  return [
+    { loading },
+    async (payload: { amount: number; userId: string | number }) => {
+      setLoading(true);
+
+      try {
+        await TransactionsService.depositUser(payload.amount, payload.userId);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        throw e;
+      }
+    },
+  ];
+};

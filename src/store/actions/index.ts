@@ -75,6 +75,7 @@ export const login =
       dispatch(setAuth(true));
       dispatch(setUser(response.data.user));
     } catch (e) {
+      console.log(e);
       // @ts-ignore
       dispatch(setErrorAuth(e.response?.data?.message || "Error"));
     }

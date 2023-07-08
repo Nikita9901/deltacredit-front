@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { checkAuth, getCreditsList } from "../store/actions";
 import { useIsLoading } from "../utils/hooks";
 import Layout from "../components/Layout";
+import ModalProvider from "mui-modal-provider";
 
 const App: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -36,30 +37,32 @@ const App: React.FC = () => {
       />
 
       <BrowserRouter>
-        {!loading && (
-          <>
-            <Header />
-            <Routes>
-              {routesConfig.map((route, index) => (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={
-                    <Box
-                      display={"flex"}
-                      height={"100%"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                      paddingTop={"75px"}
-                    >
-                      {route.element}
-                    </Box>
-                  }
-                />
-              ))}
-            </Routes>
-          </>
-        )}
+        <ModalProvider>
+          {!loading && (
+            <>
+              <Header />
+              <Routes>
+                {routesConfig.map((route, index) => (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                      <Box
+                        display={"flex"}
+                        height={"100%"}
+                        alignItems={"center"}
+                        justifyContent={"center"}
+                        paddingTop={"75px"}
+                      >
+                        {route.element}
+                      </Box>
+                    }
+                  />
+                ))}
+              </Routes>
+            </>
+          )}
+        </ModalProvider>
       </BrowserRouter>
     </Box>
   );

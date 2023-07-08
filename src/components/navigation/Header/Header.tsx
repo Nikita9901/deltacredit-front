@@ -19,6 +19,7 @@ import {
   useIsAuthenticated,
   useLogout,
 } from "../../../utils/hooks";
+import BalanceButton from "../BalanceButton";
 const settings = ["Account", "Dashboard"];
 
 const Header: React.FC = () => {
@@ -155,7 +156,8 @@ const Header: React.FC = () => {
           </Box>
 
           {isAuthed ? (
-            <Box sx={{ flexGrow: 0 }}>
+            <Box sx={{ display: "flex", gap: "20px" }}>
+              <BalanceButton />
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

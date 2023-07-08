@@ -1,8 +1,7 @@
 import React from "react";
 import { MLButton, MLModal, MLTypography } from "@moneylend-ui";
 import { ModalActionsNew as ModalActions } from "../../../moneylend-ui/components/MLModal/ModalContainer/styles";
-// import { useCreditsCsv } from "apis/coin/api";
-import { useExportCreditsToCsv, useToast } from "../../../utils/hooks";
+import { useToast } from "../../../utils/hooks";
 
 function ExportModal({
   close,
@@ -10,9 +9,7 @@ function ExportModal({
 }: {
   close: () => void;
 }): React.ReactElement {
-  // const [exportCsv, exportStatus] = useTransactionsHistoryCsvMutation();
   const toast = useToast();
-  // const [{ loading }, exportCsv] = useExportCreditsToCsv();
 
   const handleExport = async () => {
     try {
@@ -34,9 +31,8 @@ function ExportModal({
   return (
     <MLModal open={false} wide {...props} close={close} title={"Export to csv"}>
       <MLTypography>
-        We are creating a report including all the transactions since this
-        account was created. We will send you an email in the following 10
-        minutes with the steps to download your transactions history report.
+        We are creating a report including all the credits since this account
+        was created. We will send you a file to download credits report.
       </MLTypography>
       <ModalActions>
         <MLButton

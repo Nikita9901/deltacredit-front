@@ -6,10 +6,14 @@ import { ITransferField } from "./types";
 import { useNavigate } from "react-router-dom";
 import { MLButton, MLInput, MLTypography } from "@moneylend-ui";
 import MLLogoImage from "../../moneylend-ui/components/MLLogoImage";
-import { useAuthenticate } from "../../utils/hooks";
+import { useAuthenticate, useToast } from "../../utils/hooks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const errorsAuthed = useSelector((state: RootState) => state.auth)?.error;
+  const toast = useToast();
 
   const [{ loading: loggingIn }, authenticate] = useAuthenticate();
 
@@ -26,8 +30,12 @@ const LoginPage: React.FC = () => {
     email,
     password,
   }) => {
-    await authenticate({ email, password });
-    navigate("/");
+    try {
+      await authenticate({ email, password });
+      if (!errorsAuthed) navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <Block>
@@ -94,6 +102,14 @@ const LoginPage: React.FC = () => {
             }}
           >
             <MLTypography>Sign Up</MLTypography>
+          </MLButton>
+          <MLButton
+            variant={"text"}
+            onClick={() => {
+              console.log(errorsAuthed);
+            }}
+          >
+            <MLTypography>Errors</MLTypography>
           </MLButton>
         </Box>
       </Box>

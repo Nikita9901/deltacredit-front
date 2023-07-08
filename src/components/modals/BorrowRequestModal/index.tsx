@@ -2,6 +2,8 @@ import React from "react";
 import { DialogProps } from "@mui/material/Dialog";
 import { MLModal } from "@moneylend-ui";
 import BorrowRequestForm from "./components/BorrowRequestForm";
+import { useAuthCheck, useIsAuthenticated } from "../../../utils/hooks";
+import { useNavigate } from "react-router-dom";
 
 function BorrowRequestModal({
   close,
@@ -13,7 +15,7 @@ function BorrowRequestModal({
   action: (code?: string) => void;
   creditId: number;
 } & DialogProps): React.ReactElement {
-  console.log(creditId);
+  useAuthCheck();
   return (
     <MLModal
       authOnly

@@ -5,6 +5,7 @@ import {
   useAuthCheck,
   useCurrentUser,
   useEditProfile,
+  useToast,
 } from "../../utils/hooks";
 import { Box } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -16,7 +17,7 @@ const EditProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const [{ loading }, edit] = useEditProfile();
   const user = useCurrentUser();
-  // console.log(profileId, user?.id);
+  const toast = useToast();
   useEffect(() => {
     if (user?.id !== profileId) {
       navigate(`/profile/${user?.id}/edit`);

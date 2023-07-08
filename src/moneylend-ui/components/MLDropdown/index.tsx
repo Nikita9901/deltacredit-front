@@ -92,7 +92,7 @@ const MLDropdown: (
           PaperProps={{
             sx: {
               minWidth: "220px",
-              backgroundColor: "#12152c",
+              backgroundColor: "rgba(4, 20, 31, 0.9)",
               whiteSpace: "nowrap",
               color: "#fff",
               boxShadow: "0 4px 6px -2px #00000061",

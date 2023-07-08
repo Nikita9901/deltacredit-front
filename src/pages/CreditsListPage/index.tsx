@@ -1,9 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import {
-  useCurrentUser,
-  useGetCreditsList,
-  useGetUserBorrows,
-} from "../../utils/hooks";
+import React, { useMemo } from "react";
+import { useGetCreditsList, useGetUserBorrows } from "../../utils/hooks";
 import Layout from "../../components/Layout";
 import { Box } from "@mui/material";
 import { createColumnHelper } from "../../moneylend-ui/utils";
@@ -58,6 +54,7 @@ const CreditsListPage: React.FC = () => {
     <Layout loading={loading as boolean}>
       <Box>
         <MLButton
+          sx={{ marginLeft: "auto", marginBottom: "10px" }}
           onClick={() => {
             // @ts-ignore
             showModal(ExportModal);

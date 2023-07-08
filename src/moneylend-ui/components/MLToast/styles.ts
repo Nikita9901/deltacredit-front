@@ -25,6 +25,8 @@ export const ToastContainer = styled.div<{ variant: string; size: string }>`
   box-shadow: 4px 6px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   position: absolute;
+  top: 80px;
+  right: 10px;
 
   ${(props) =>
     props.size === "large" &&

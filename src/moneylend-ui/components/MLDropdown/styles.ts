@@ -63,11 +63,11 @@ export const NavLink = styled.span<
       }
     `}
 
-  ${({ active }) => `
+  ${({ active }) => ` 
     ${styledIf(
       active,
       `
-      color: #7682f7;
+      color: rgba(4, 20, 31, 0.9);
     `,
       `
 

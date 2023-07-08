@@ -2,11 +2,11 @@ import { styled, Button } from "@mui/material";
 
 export const StyledButton = styled(Button)`
   display: flex;
+  padding: 10px 50px;
+  max-height: 50px;
   &.MuiButton-contained {
     background: #0082b4;
-    border-radius: 50px;
-    width: 200px;
-    height: 50px;
+    border-radius: 3px;
   }
   align-items: center;
   text-align: center;

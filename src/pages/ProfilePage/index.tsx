@@ -8,18 +8,21 @@ import {
   useGetUserCredits,
 } from "../../utils/hooks";
 import Layout from "../../components/Layout";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, IconButton } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useMLModal } from "@moneylend-ui";
 import CreateCreditModal from "./components/CreateCredit";
 import { ShowFnOutput } from "mui-modal-provider";
 import CreditView from "../CreditsListPage/components/CreditView";
+import EditIcon from "@mui/icons-material/Edit";
 
 const ProfilePage: React.FC = () => {
   const { showModal } = useMLModal();
   const { profileId } = useParams();
   const currentUser = useCurrentUser();
-  const { userCredits, isLoading: loading } = useGetUserCredits(profileId);
+  const { userCredits, isLoading: loading } = useGetUserCredits(
+    profileId?.toString()
+  );
   const navigate = useNavigate();
   const { user, isLoading } = useGetUserById(profileId);
   return (
@@ -51,16 +54,17 @@ const ProfilePage: React.FC = () => {
               >{`Phone: ${user.phone_number}`}</MLTypography>
             )}
           </Box>
-          {currentUser?.id?.toString() === user?.id?.toString() && (
-            <MLButton
-              variant={"contained"}
-              onClick={() => {
-                navigate(`/profile/${profileId}/edit`);
-              }}
-            >
-              Edit Profile
-            </MLButton>
-          )}
+          <Box>
+            {currentUser?.id?.toString() === user?.id?.toString() && (
+              <IconButton
+                onClick={() => {
+                  navigate(`/profile/${profileId}/edit`);
+                }}
+              >
+                <EditIcon width={24} height={24} sx={{ color: "grey" }} />
+              </IconButton>
+            )}
+          </Box>
           {currentUser?.id?.toString() === user?.id?.toString() && (
             <MLButton
               variant={"contained"}
